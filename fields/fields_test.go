@@ -1,7 +1,9 @@
 package fields
 
 import (
+	//	"fmt"
 	"testing"
+	"time"
 )
 
 func TestStringFields(t *testing.T) {
@@ -40,6 +42,53 @@ func TestIntFields(t *testing.T) {
 
 	// Negative test - this should fail
 	str, err2 := s.GetString()
+	if err2 == nil {
+		t.Errorf("Field is of type Int, but string value retrievable")
+	} else {
+		if str != "" {
+			t.Errorf("Did not get the default value \"\" on failure, instead got %s", str)
+		}
+	}
+}
+
+func TestCharField(t *testing.T) {
+	cc := 'C'
+	s := CharField(33, cc) // tag is 900, value is num
+	c, err := s.GetChar()
+	if err != nil {
+		t.Errorf("Failed to retrieve char value")
+	} else {
+		if c != cc {
+			t.Errorf("Extracted value %c but instead got %c", cc, c)
+		}
+	}
+
+	// Negative test - this should fail
+	str, err2 := s.GetString()
+	if err2 == nil {
+		t.Errorf("Field is of type Int, but string value retrievable")
+	} else {
+		if str != "" {
+			t.Errorf("Did not get the default value \"\" on failure, instead got %s", str)
+		}
+	}
+}
+
+func TestDateTimeField(t *testing.T) {
+	dd := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+	f := DateTimeField(68, dd)
+
+	d, err := f.GetDateTime()
+	if err != nil {
+		t.Errorf("Failed to retrieve DateTime value")
+	} else {
+		if d != dd {
+			t.Errorf("Extracted value %v but instead got %v", dd, d)
+		}
+	}
+
+	// Negative test - this should fail
+	str, err2 := f.GetString()
 	if err2 == nil {
 		t.Errorf("Field is of type Int, but string value retrievable")
 	} else {
