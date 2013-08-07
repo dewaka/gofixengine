@@ -1,7 +1,7 @@
 package fields
 
 import (
-	//	"fmt"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -53,13 +53,36 @@ func TestIntFields(t *testing.T) {
 
 func TestCharField(t *testing.T) {
 	cc := 'C'
-	s := CharField(33, cc) // tag is 900, value is num
+	s := CharField(33, cc)
 	c, err := s.GetChar()
 	if err != nil {
 		t.Errorf("Failed to retrieve char value")
 	} else {
 		if c != cc {
 			t.Errorf("Extracted value %c but instead got %c", cc, c)
+		}
+	}
+
+	// Negative test - this should fail
+	str, err2 := s.GetString()
+	if err2 == nil {
+		t.Errorf("Field is of type Int, but string value retrievable")
+	} else {
+		if str != "" {
+			t.Errorf("Did not get the default value \"\" on failure, instead got %s", str)
+		}
+	}
+}
+
+func TestFloatField(t *testing.T) {
+	ff := 3.1234
+	s := FloatField(33, ff)
+	f, err := s.GetFloat()
+	if err != nil {
+		t.Errorf("Failed to retrieve float64 value")
+	} else {
+		if f != ff {
+			t.Errorf("Extracted value %f but instead got %f", ff, f)
 		}
 	}
 
@@ -95,5 +118,43 @@ func TestDateTimeField(t *testing.T) {
 		if str != "" {
 			t.Errorf("Did not get the default value \"\" on failure, instead got %s", str)
 		}
+	}
+}
+
+func TestBooleanField(t *testing.T) {
+	bb := true
+	s := BoolField(33, bb)
+	b, err := s.GetBool()
+	if err != nil {
+		t.Errorf("Failed to retrieve boolean value")
+	} else {
+		if b != bb {
+			t.Errorf("Extracted value %b but instead got %b", bb, b)
+		}
+	}
+
+	// Negative test - this should fail
+	str, err2 := s.GetString()
+	if err2 == nil {
+		t.Errorf("Field is of type Int, but string value retrievable")
+	} else {
+		if str != "" {
+			t.Errorf("Did not get the default value \"\" on failure, instead got %s", str)
+		}
+	}
+}
+
+// Field to string should return the same value as Sprintf with "%v"
+func TestFieldToString(t *testing.T) {
+	f := FloatField(34, 3.41234)
+	sf := fmt.Sprintf("%s", f)
+	if str := fmt.Sprintf("%v", 3.41234); sf != str {
+		t.Errorf("Expected %s, but we got %s", str, sf)
+	}
+
+	f2 := CharField(38, 'C')
+	sf2 := fmt.Sprintf("%s", f2)
+	if str := fmt.Sprintf("%v", 'C'); sf2 != str {
+		t.Errorf("Expected %s, but we got %s", str, sf2)
 	}
 }
